@@ -1,0 +1,46 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>ESP8266TEST</title>
+  <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+  <script src="http://dweet.io/client/dweet.io.min.js"></script>
+</head>
+<body>
+  <div>
+    <div id="espGauge"></div>
+  </div>
+  <script type="text/javascript">
+    var thingName = "esp8266test20160422" // channel名の設定	
+
+    // Google Chart
+    google.load("visualization", "1", {packages:["gauge", "line","corechart"]});
+    google.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+      // Data for temperature Gauge
+      Data = google.visualization.arrayToDataTable([
+        ['Label', 'Value'],
+        ['val', 0],
+      ]);
+
+      // Option for Gauge
+      Options = {
+        width: 200, height: 200,
+        min: 0, max: 150,
+        minorTicks: 5
+      };
+
+      Gauge = new google.visualization.Gauge(document.getElementById('espGauge'));
+      Gauge.draw(Data, Options);
+
+    };
+
+    dweetio.listen_for(thingName, function(dweet){
+      // Update data
+      Data.setValue(0, 1, dweet.content.val);
+      Gauge.draw(Data, Options);
+    });
+  </script>
+</body>
+</html>
